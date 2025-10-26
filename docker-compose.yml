@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  victim:
+    image: python:3.11-slim
+    container_name: victim
+    command: bash -c "python -m http.server 8000"
+    networks:
+      - labnet
+  attacker:
+    image: python:3.11-slim
+    container_name: attacker
+    tty: true
+    networks:
+      - labnet
+    volumes:
+      - ./captures:/captures
+  monitor:
+    image: nicolaka/netshoot:latest
+    container_name: monitor
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    networks:
+      - labnet
+    volumes:
+      - ./captures:/captures
+networks:
+  labnet:
+    driver: bridge
